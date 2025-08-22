@@ -1,0 +1,49 @@
+WARNING 2025-08-22 18:09:59,697 log 11700 7796 Bad Request: /api/auth/password/change/
+WARNING 2025-08-22 18:10:02,159 log 11700 7796 Unauthorized: /api/auth/user/
+WARNING 2025-08-22 18:10:04,599 log 11700 7796 Bad Request: /api/auth/login/
+WARNING 2025-08-22 18:10:07,028 log 11700 7796 Bad Request: /api/auth/login/
+WARNING 2025-08-22 18:10:10,533 log 11700 7796 Bad Request: /api/auth/logout/
+WARNING 2025-08-22 18:10:14,075 log 11700 7796 Bad Request: /api/auth/register/
+WARNING 2025-08-22 18:10:34,559 log 11700 7796 Bad Request: /api/auth/email/verify/
+WARNING 2025-08-22 18:10:36,455 log 11700 7796 Bad Request: /api/auth/email/verify/
+WARNING 2025-08-22 18:10:40,016 log 11700 7796 Bad Request: /api/auth/email/resend/
+WARNING 2025-08-22 18:10:43,967 log 11700 7796 Bad Request: /api/auth/password/reset/confirm/
+WARNING 2025-08-22 18:10:49,790 log 11700 7796 Bad Request: /api/auth/password/reset/
+WARNING 2025-08-22 18:18:57,049 log 18048 16256 Bad Request: /api/auth/password/change/
+WARNING 2025-08-22 18:18:59,238 log 18048 16256 Unauthorized: /api/auth/user/
+WARNING 2025-08-22 18:19:01,478 log 18048 16256 Bad Request: /api/auth/login/
+WARNING 2025-08-22 18:19:03,635 log 18048 16256 Bad Request: /api/auth/login/
+WARNING 2025-08-22 18:19:10,226 log 18048 16256 Bad Request: /api/auth/register/
+WARNING 2025-08-22 18:19:30,279 log 18048 16256 Bad Request: /api/auth/email/verify/
+WARNING 2025-08-22 18:19:32,186 log 18048 16256 Bad Request: /api/auth/email/verify/
+WARNING 2025-08-22 18:19:35,760 log 18048 16256 Bad Request: /api/auth/email/resend/
+WARNING 2025-08-22 18:19:39,274 log 18048 16256 Bad Request: /api/auth/password/reset/confirm/
+WARNING 2025-08-22 18:19:45,377 log 18048 16256 Bad Request: /api/auth/password/reset/
+INFO 2025-08-22 18:22:43,202 autoreload 16840 6308 Watching for file changes with StatReloader
+WARNING 2025-08-22 18:22:53,566 log 16840 5348 Not Found: /
+WARNING 2025-08-22 18:22:53,567 basehttp 16840 5348 "GET / HTTP/1.1" 404 2657
+WARNING 2025-08-22 18:22:53,717 log 16840 5348 Not Found: /favicon.ico
+WARNING 2025-08-22 18:22:53,718 basehttp 16840 5348 "GET /favicon.ico HTTP/1.1" 404 2708
+WARNING 2025-08-22 18:23:07,389 log 16840 5348 Not Found: /api/auth/
+WARNING 2025-08-22 18:23:07,390 basehttp 16840 5348 "GET /api/auth/ HTTP/1.1" 404 5842
+INFO 2025-08-22 18:23:58,363 basehttp 16840 5348 "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-08-22 18:23:58,634 basehttp 16840 5348 "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4177
+INFO 2025-08-22 18:23:59,087 basehttp 16840 12168 "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2808
+INFO 2025-08-22 18:23:59,103 basehttp 16840 4128 "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2025-08-22 18:23:59,107 basehttp 16840 5348 "GET /static/admin/css/base.css HTTP/1.1" 200 22120
+INFO 2025-08-22 18:23:59,113 basehttp 16840 320 "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-08-22 18:23:59,117 basehttp 16840 6036 "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2025-08-22 18:23:59,120 basehttp 16840 9708 "GET /static/admin/css/responsive.css HTTP/1.1" 200 16565
+INFO 2025-08-22 18:23:59,128 basehttp 16840 9708 "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+INFO 2025-08-22 18:24:05,962 basehttp 16840 9708 "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4345
+INFO 2025-08-22 18:24:39,732 basehttp 16840 9708 "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-08-22 18:24:39,913 basehttp 16840 9708 "GET /admin/ HTTP/1.1" 200 10689
+INFO 2025-08-22 18:24:39,944 basehttp 16840 9708 "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-08-22 18:24:39,952 basehttp 16840 9708 "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-08-22 18:24:39,953 basehttp 16840 6036 "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+WARNING 2025-08-22 18:25:07,432 log 16840 9708 Not Found: /
+WARNING 2025-08-22 18:25:07,434 basehttp 16840 9708 "GET / HTTP/1.1" 404 2657
+WARNING 2025-08-22 18:25:31,311 log 16840 9708 Not Found: /api/auth/
+WARNING 2025-08-22 18:25:31,312 basehttp 16840 9708 "GET /api/auth/ HTTP/1.1" 404 5842
+WARNING 2025-08-22 18:25:49,905 log 16840 9708 Method Not Allowed: /api/auth/register/
+WARNING 2025-08-22 18:25:49,907 basehttp 16840 9708 "GET /api/auth/register/ HTTP/1.1" 405 40
