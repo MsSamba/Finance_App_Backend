@@ -6,59 +6,59 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import Coalesce
 from decimal import Decimal
-from .models import Transaction, Category
-from .serializers import TransactionSerializer, CategorySerializer, TransactionSummarySerializer
+from .models import Transaction
+from .serializers import TransactionSerializer, TransactionSummarySerializer
 
-class CategoryViewSet(viewsets.ModelViewSet):
-    """ViewSet for managing transaction categories"""
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name']
-    ordering_fields = ['name', 'created_at']
-    ordering = ['name']
+# class CategoryViewSet(viewsets.ModelViewSet):
+#     """ViewSet for managing transaction categories"""
+#     serializer_class = CategorySerializer
+#     permission_classes = [IsAuthenticated]
+#     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+#     search_fields = ['name']
+#     ordering_fields = ['name', 'created_at']
+#     ordering = ['name']
     
-    def get_queryset(self):
-        """Return all categories"""
-        return Category.objects.all()
+#     def get_queryset(self):
+#         """Return all categories"""
+#         return Category.objects.all()
     
-    @action(detail=False, methods=['post'])
-    def create_defaults(self, request):
-        """Create default categories"""
-        default_categories = [
-            {'name': 'Income', 'icon': '💰', 'is_income_category': True},
-            {'name': 'Bills and Utilities', 'icon': '🏠', 'is_income_category': False},
-            {'name': 'Education and Self Improvement', 'icon': '📚', 'is_income_category': False},
-            {'name': 'Entertainment and Leisure', 'icon': '🎬', 'is_income_category': False},
-            {'name': 'Family and Kids', 'icon': '👨‍👩‍👧‍👦', 'is_income_category': False},
-            {'name': 'Food and Dining', 'icon': '🍽️', 'is_income_category': False},
-            {'name': 'Health and Wellness', 'icon': '🏥', 'is_income_category': False},
-            {'name': 'Savings and Investments', 'icon': '📈', 'is_income_category': False},
-            {'name': 'Shopping and Personal Care', 'icon': '🛍️', 'is_income_category': False},
-            {'name': 'Transportation', 'icon': '🚗', 'is_income_category': False},
-        ]
+#     @action(detail=False, methods=['post'])
+#     def create_defaults(self, request):
+#         """Create default categories"""
+#         default_categories = [
+#             {'name': 'Income', 'icon': '💰', 'is_income_category': True},
+#             {'name': 'Bills and Utilities', 'icon': '🏠', 'is_income_category': False},
+#             {'name': 'Education and Self Improvement', 'icon': '📚', 'is_income_category': False},
+#             {'name': 'Entertainment and Leisure', 'icon': '🎬', 'is_income_category': False},
+#             {'name': 'Family and Kids', 'icon': '👨‍👩‍👧‍👦', 'is_income_category': False},
+#             {'name': 'Food and Dining', 'icon': '🍽️', 'is_income_category': False},
+#             {'name': 'Health and Wellness', 'icon': '🏥', 'is_income_category': False},
+#             {'name': 'Savings and Investments', 'icon': '📈', 'is_income_category': False},
+#             {'name': 'Shopping and Personal Care', 'icon': '🛍️', 'is_income_category': False},
+#             {'name': 'Transportation', 'icon': '🚗', 'is_income_category': False},
+#         ]
         
-        created_categories = []
-        for cat_data in default_categories:
-            category, created = Category.objects.get_or_create(
-                name=cat_data['name'],
-                defaults=cat_data
-            )
-            if created:
-                created_categories.append(category)
+#         created_categories = []
+#         for cat_data in default_categories:
+#             category, created = Category.objects.get_or_create(
+#                 name=cat_data['name'],
+#                 defaults=cat_data
+#             )
+#             if created:
+#                 created_categories.append(category)
         
-        serializer = self.get_serializer(created_categories, many=True)
-        return Response({
-            'message': f'Created {len(created_categories)} default categories',
-            'categories': serializer.data
-        })
+#         serializer = self.get_serializer(created_categories, many=True)
+#         return Response({
+#             'message': f'Created {len(created_categories)} default categories',
+#             'categories': serializer.data
+#         })
 
 class TransactionViewSet(viewsets.ModelViewSet):
     """ViewSet for managing transactions"""
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['type', 'category', 'date']
+    filterset_fields = ['type', 'date']
     search_fields = ['description']
     ordering_fields = ['date', 'amount', 'created_at']
     ordering = ['-date', '-created_at']

@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Transaction, Category
+from .models import Transaction
 from django.contrib.auth.models import User
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Category
-        fields = ['id', 'name', 'icon', 'is_income_category', 'created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+# class CategorySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Category
+#         fields = ['id', 'name', 'icon', 'is_income_category', 'created_at', 'updated_at']
+#         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class TransactionSerializer(serializers.ModelSerializer):
     signed_amount = serializers.DecimalField(max_digits=12, decimal_places=2, read_only=True)
@@ -14,7 +14,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Transaction
         fields = [
-            'id', 'amount', 'description', 'category', 'type', 'date', 
+            'id', 'amount', 'description', 'type', 'date', 
             'signed_amount', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'signed_amount']

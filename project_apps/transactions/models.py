@@ -5,24 +5,24 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 import uuid
 
-class Category(models.Model):
-    """Transaction categories - simplified to match frontend"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100, unique=True)
-    icon = models.CharField(max_length=10, default='💰')
-    is_income_category = models.BooleanField(default=False)  # True for Income category
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Category(models.Model):
+#     """Transaction categories - simplified to match frontend"""
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     name = models.CharField(max_length=100, unique=True)
+#     icon = models.CharField(max_length=10, default='💰')
+#     is_income_category = models.BooleanField(default=False)  # True for Income category
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
     
-    class Meta:
-        verbose_name_plural = "Categories"
-        ordering = ['name']
+#     class Meta:
+#         verbose_name_plural = "Categories"
+#         ordering = ['name']
     
-    def __str__(self):
-        return f"{self.icon} {self.name}"
+#     def __str__(self):
+#         return f"{self.icon} {self.name}"
 
 class Transaction(models.Model):
-    """User transactions - matching original frontend structure"""
+    """User transactions - simplified to match frontend"""
     TRANSACTION_TYPES = [
         ('income', 'Income'),
         ('expense', 'Expense'),
@@ -36,7 +36,7 @@ class Transaction(models.Model):
         validators=[MinValueValidator(Decimal('0.01'))]
     )
     description = models.CharField(max_length=255)
-    category = models.CharField(max_length=100)  # Store category name as string like frontend
+    # category = models.CharField(max_length=100)  # Store category name as string like frontend
     type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)  # Match frontend field name
     date = models.DateField()
     
@@ -49,7 +49,7 @@ class Transaction(models.Model):
         indexes = [
             models.Index(fields=['user', 'date']),
             models.Index(fields=['user', 'type']),
-            models.Index(fields=['user', 'category']),
+            # models.Index(fields=['user', 'category']),
         ]
     
     def __str__(self):
