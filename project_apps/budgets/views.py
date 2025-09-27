@@ -9,58 +9,12 @@ from decimal import Decimal
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.db import models
-from .models import Budget, BudgetHistory, BudgetAlert, BudgetTemplate, Category
+from .models import Budget, BudgetHistory, BudgetAlert, BudgetTemplate
+from project_apps.transactions.models import Category
 from .serializers import (
     BudgetSerializer, BudgetHistorySerializer, BudgetAlertSerializer,
     BudgetTemplateSerializer, BudgetAnalyticsSerializer, BudgetSummarySerializer, CategorySerializer
 )
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    """ViewSet for managing budget categories"""
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['name']
-    ordering_fields = ['name', 'created_at']
-    ordering = ['name']
-    
-    def get_queryset(self):
-        """Return all categories"""
-        return Category.objects.all()
-    
-    @action(detail=False, methods=['post'])
-    def create_defaults(self, request):
-        """Create default categories"""
-        default_categories = [
-            {'name': 'Income', 'icon': '💰', 'is_income_category': True},
-            {'name': 'Bills and Utilities', 'icon': '🏠', 'is_income_category': False},
-            {'name': 'Education and Self Improvement', 'icon': '📚', 'is_income_category': False},
-            {'name': 'Entertainment and Leisure', 'icon': '🎬', 'is_income_category': False},
-            {'name': 'Family and Kids', 'icon': '👨‍👩‍👧‍👦', 'is_income_category': False},
-            {'name': 'Food and Dining', 'icon': '🍽️', 'is_income_category': False},
-            {'name': 'Health and Wellness', 'icon': '🏥', 'is_income_category': False},
-            {'name': 'Savings and Investments', 'icon': '📈', 'is_income_category': False},
-            {'name': 'Shopping and Personal Care', 'icon': '🛍️', 'is_income_category': False},
-            {'name': 'Transportation', 'icon': '🚗', 'is_income_category': False},
-        ]
-        
-        created_categories = []
-        for cat_data in default_categories:
-            category, created = Category.objects.get_or_create(
-                name=cat_data['name'],
-                defaults=cat_data
-            )
-            if created:
-                created_categories.append(category)
-        
-        serializer = self.get_serializer(created_categories, many=True)
-        return Response({
-            'message': f'Created {len(created_categories)} default categories',
-            'categories': serializer.data
-        })
-
-
 
 class BudgetViewSet(viewsets.ModelViewSet):
     serializer_class = BudgetSerializer

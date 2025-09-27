@@ -1,12 +1,13 @@
 from django.contrib import admin
 from .models import Transaction
+from project_apps.transactions.models import Category
 
-# @admin.register(Category)
-# class CategoryAdmin(admin.ModelAdmin):
-#     list_display = ['name', 'icon', 'is_income_category', 'created_at']
-#     list_filter = ['is_income_category', 'created_at']
-#     search_fields = ['name']
-#     readonly_fields = ['id', 'created_at', 'updated_at']
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'icon', 'is_income_category', 'created_at']
+    list_filter = ['is_income_category', 'created_at']
+    search_fields = ['name']
+    readonly_fields = ['id', 'created_at', 'updated_at']
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):

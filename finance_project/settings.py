@@ -46,6 +46,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework_simplejwt.token_blacklist',
     'project_apps.authentication',
+    'project_apps.transactions',
+    'project_apps.budgets',
+    'project_apps.savings',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'finance_project.urls'
 
@@ -159,6 +165,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
@@ -256,5 +263,33 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+    },
+}
+
+
+
+# Celery Configuration
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+# Celery Beat Schedule for periodic tasks
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'check-budget-alerts': {
+        'task': 'budgets.tasks.check_budget_alerts',
+        'schedule': crontab(minute=0, hour='*/6'),  # Every 6 hours
+    },
+    'archive-budget-history': {
+        'task': 'budgets.tasks.archive_budget_history',
+        'schedule': crontab(minute=0, hour=0),  # Daily at midnight
+    },
+    'cleanup-old-alerts': {
+        'task': 'budgets.tasks.cleanup_old_alerts',
+        'schedule': crontab(minute=0, hour=2, day_of_week=0),  # Weekly on Sunday at 2 AM
     },
 }

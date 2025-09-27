@@ -6,24 +6,8 @@ from decimal import Decimal
 import uuid
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-
-
-
-class Category(models.Model):
-    """Budget categories - simplified to match frontend"""
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100, unique=True)
-    icon = models.CharField(max_length=10, default='💰')
-    is_income_category = models.BooleanField(default=False) 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        verbose_name_plural = "Categories"
-        ordering = ['name']
-    
-    def __str__(self):
-        return f"{self.icon} {self.name}"
+from django.contrib.auth.models import User
+from project_apps.transactions import models as transactions
 
 
 class Budget(models.Model):
@@ -53,7 +37,7 @@ class Budget(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
-    category = models.CharField(max_length=100)
+    category = models.ForeignKey(transactions.Category, on_delete=models.CASCADE, related_name='budgets')
     limit = models.DecimalField(max_digits=12, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     spent = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     period = models.CharField(max_length=20, choices=PERIOD_CHOICES, default='monthly')

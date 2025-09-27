@@ -1,75 +1,73 @@
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
+from django.apps import apps
 from django.db.models import Sum
 from decimal import Decimal
 from project_apps.transactions.models import Transaction
+from .models import Budget
 
 
-@receiver(post_save, sender=Transaction)
-def update_budget_spent_on_transaction_save(sender, instance, created, **kwargs):
-    """Update budget spent amount when a transaction is created or updated"""
-    from .models import Budget
-
-    if not instance.user:
+def recalc_budget(user, category):
+    """Recalculate and update spent amount for a user's budget in a given category."""
+    if not user or not category:
         return
+
+    Transaction = apps.get_model("transactions", "Transaction")
 
     try:
         budget = Budget.objects.get(
-            user=instance.user,
-            # category=instance.category,
+            user=user,
+            category=category,
             status="active"
         )
 
-        from django.apps import apps
-        Transaction = apps.get_model("transactions", "Transaction") 
-
         total_spent = Transaction.objects.filter(
-            user=instance.user,
-            # category=instance.category,
-            transaction_type="expense",
+            user=user,
+            category=category,
+            type="expense",
             date__gte=budget.period_start,
-            date__lte=budget.period_end
+            date__lte=budget.period_end,
         ).aggregate(Sum("amount"))["amount__sum"] or Decimal("0.00")
 
         budget.spent = total_spent
         budget.save(update_fields=["spent", "updated_at"])
 
+        # check alerts
+        from .tasks import create_budget_alert
         if budget.is_alert_threshold_reached or budget.is_over_budget:
-            from .tasks import create_budget_alert
             create_budget_alert.delay(budget.id)
 
     except Budget.DoesNotExist:
         pass
 
 
-@receiver(post_delete, sender=Transaction)
-def update_budget_spent_on_transaction_delete(sender, instance, **kwargs):
-    """Update budget spent amount when a transaction is deleted"""
-    from .models import Budget
-
-    if not instance.user:
+@receiver(pre_save, sender=Transaction)
+def track_old_category(sender, instance, **kwargs):
+    """Store old category before updating a transaction"""
+    if not instance.pk:  # new transaction, nothing to compare
         return
 
     try:
-        budget = Budget.objects.get(
-            user=instance.user,
-            # category=instance.category,
-            status="active"
-        )
+        old_instance = Transaction.objects.get(pk=instance.pk)
+        instance._old_category = old_instance.category
+    except Transaction.DoesNotExist:
+        instance._old_category = None
 
-        from django.apps import apps
-        Transaction = apps.get_model("transactions", "Transaction")  # ✅ FIXED
 
-        total_spent = Transaction.objects.filter(
-            user=instance.user,
-            # category=instance.category,
-            transaction_type="expense",
-            date__gte=budget.period_start,
-            date__lte=budget.period_end
-        ).aggregate(Sum("amount"))["amount__sum"] or Decimal("0.00")
+@receiver(post_save, sender=Transaction)
+def update_budget_spent_on_transaction_save(sender, instance, created, **kwargs):
+    """Update budget spent when a transaction is created or updated"""
 
-        budget.spent = total_spent
-        budget.save(update_fields=["spent", "updated_at"])
+    # if category was changed, recalc old one too
+    if hasattr(instance, "_old_category") and instance._old_category != instance.category:
+        recalc_budget(instance.user, instance._old_category)
 
-    except Budget.DoesNotExist:
-        pass
+    # always recalc current category
+    recalc_budget(instance.user, instance.category)
+
+
+@receiver(post_delete, sender=Transaction)
+def update_budget_spent_on_transaction_delete(sender, instance, **kwargs):
+    """Update budget spent when a transaction is deleted"""
+    recalc_budget(instance.user, instance.category)
+

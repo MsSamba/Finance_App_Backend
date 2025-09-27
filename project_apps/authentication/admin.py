@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.html import format_html
 from .models import User, UserProfile, EmailVerificationToken, PasswordResetToken
+from project_apps.transactions.models import Transaction
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
