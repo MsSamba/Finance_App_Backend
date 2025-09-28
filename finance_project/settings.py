@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'project_apps.transactions',
     'project_apps.budgets',
     'project_apps.savings',
+    'project_apps.recurring_bills',
     'django_filters',
 ]
 
