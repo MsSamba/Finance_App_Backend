@@ -181,12 +181,45 @@ class UserProfileView(RetrieveUpdateAPIView):
     def get_object(self):
         profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         return profile
-    
+
     def update(self, request, *args, **kwargs):
-        response = super().update(request, *args, **kwargs)
-        if response.status_code == 200:
-            logger.info(f"Profile updated for user: {request.user.email}")
-        return response
+        profile = self.get_object()
+        user = profile.user
+
+        # Flatten nested profile data if present
+        data = request.data.copy()
+        profile_data_nested = data.pop('profile', {})
+        if isinstance(profile_data_nested, dict):
+            data.update(profile_data_nested)
+
+        # Update User fields
+        user_fields = ['first_name', 'last_name', 'email']
+        user_data = {field: data.get(field) for field in user_fields if field in data}
+        for field, value in user_data.items():
+            setattr(user, field, value)
+        if user_data:
+            user.save()
+
+        # Update UserProfile fields
+        profile_fields = [
+            'user_full_name', 'user_email', 'phone_number', 'date_of_birth', 'avatar',
+            'preferred_currency', 'theme_preference', 'email_notifications', 'sms_notifications',
+            'budget_alerts', 'bill_reminders', 'monthly_budget_limit', 'savings_goal_percentage'
+        ]
+        profile_data = {field: data.get(field) for field in profile_fields if field in data}
+        for field, value in profile_data.items():
+            setattr(profile, field, value)
+        if profile_data:
+            profile.save()
+
+        logger.info(f"Profile and user details updated for user: {user.email}")
+
+        user_serializer = UserSerializer(user)
+        profile_serializer = UserProfileSerializer(profile)
+        return Response({
+            **user_serializer.data,
+            "profile": profile_serializer.data
+        })
 
 class UserDetailView(RetrieveUpdateAPIView):
     """
