@@ -14,6 +14,8 @@ from pathlib import Path
 import os
 from decouple import config
 from datetime import timedelta
+import dj_database_url
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +28,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-rc9dh*kztd9_1g4(y70qsrf+m6+^ozqp8!o5v3)0fk8-34o_q(')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+# ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',') if config('ALLOWED_HOSTS', default='') else []
 
 
 # Application definition
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -90,15 +94,21 @@ WSGI_APPLICATION = 'finance_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', cast=int, default=5432),
-    }
+DATABASE_URL = config('DATABASE_URL', default='')
+if DATABASE_URL:
+   DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+}
+else:
+    DATABASES = {
+'default': {
+'ENGINE': 'django.db.backends.postgresql',
+'NAME': config('DB_NAME', default='finance_db'),
+'USER': config('DB_USER', default='postgres'),
+'PASSWORD': config('DB_PASSWORD', default=''),
+'HOST': config('DB_HOST', default='localhost'),
+'PORT': config('DB_PORT', default=5432, cast=int),
+}
 }
 
 
@@ -141,9 +151,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 AUTH_USER_MODEL = "authentication.User"
-
 
 # Media files
 MEDIA_URL = '/media/'
